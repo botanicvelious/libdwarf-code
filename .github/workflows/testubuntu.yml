@@ -62,5 +62,5 @@ jobs:
             ls
             ./configure --disable-decompression --enable-static
             make -j5 
-            make install
+            sudo make V=1 install
             tree ./
