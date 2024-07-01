@@ -60,7 +60,6 @@ jobs:
         run: |
             sh autogen.sh
             ls
-            ./configure --disable-decompression --enable-static
+            ./configure --disable-decompression --enable-static --disable-shared
             make -j5 
-            sudo make V=1 install
-            tree ./
+            ls -lha .libs/libdwarf.a
