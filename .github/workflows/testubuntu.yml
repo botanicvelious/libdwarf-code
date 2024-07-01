@@ -60,6 +60,7 @@ jobs:
         run: |
             sh autogen.sh
             ls
-            ./configure
+            ./configure --disable-decompression --disable-shared --enable-static
             make
             make check
+            ls -lha libdwarf
