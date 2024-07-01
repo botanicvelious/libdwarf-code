@@ -63,4 +63,4 @@ jobs:
             ./configure --disable-decompression --disable-shared --enable-static
             make -j5 
             make check
-            tree src
+            tree ./
