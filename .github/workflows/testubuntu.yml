@@ -60,7 +60,7 @@ jobs:
         run: |
             sh autogen.sh
             ls
-            ./configure --disable-decompression --disable-shared --enable-static
+            ./configure --disable-decompression --enable-static
             make -j5 
-            make check
+            make install
             tree ./
