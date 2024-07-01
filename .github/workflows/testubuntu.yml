@@ -61,6 +61,6 @@ jobs:
             sh autogen.sh
             ls
             ./configure --disable-decompression --disable-shared --enable-static
-            make
+            make -j5 
             make check
-            ls -lha
+            tree src
