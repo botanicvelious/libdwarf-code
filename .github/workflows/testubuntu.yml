@@ -62,4 +62,5 @@ jobs:
             ls
             ./configure --disable-decompression --enable-static --disable-shared
             make -j5 
-            ls -lha .libs/libdwarf.a
+            sudo make install 
+            ls -lha /usr/local/lib/libdwarf.a
