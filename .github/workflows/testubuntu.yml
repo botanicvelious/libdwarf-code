@@ -1,29 +1,72 @@
-name: freebsd_autotools
+name: Linux
 
 on:
+  pull_request: null
   workflow_dispatch:
+    inputs:
+      myCommit:
+        description: Commit SHA1
+        required: false
+        default: ''
+        type: string
+      releaseTag:
+        description: Release tag
+        required: false
+        default: ''
+        type: string
+  workflow_call:
+    inputs:
+      myCommit:
+        description: Commit SHA1
+        required: false
+        default: ''
+        type: string
+      releaseTag:
+        description: Release tag
+        required: false
+        default: ''
+        type: string
+  push: null
+  release:
+    types:
+      - published
 
-permissions: read-all
+# cancels currently running workflow from the same PR, branch or tag
+#concurrency:
+#  group: ${{github.workflow}}-${{github.ref}}
+#  cancel-in-progress: true
 
 jobs:
-  freebsd_autotools:
-    runs-on: ubuntu-latest
+  build_linux:
+    timeout-minutes: 60
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration:
+          - Debug
+          - Release
+        architecture:
+          - x86
+          - x86_64
     steps:
-      - uses: actions/checkout@v4
-      - name: FreeBSD-with-autotools
-        uses: cross-platform-actions/action@v0.23.0
+      - name: Configure fast APT mirror
+        uses: vegardit/fast-apt-mirror.sh@v1
+        with: # the following parameters are listed with their action default values and are optional
+          healthchecks:  2 # Number of mirrors from the mirrors list to check for availability and up-to-dateness
+          speedtests:    2 # Maximum number of healthy mirrors to test for speed
+          parallel:       2 # Number of parallel speed tests
+          sample-size: 1024 # Number of kilobytes to download during the speed from each mirror
+          sample-time:    3 # Maximum number of seconds within the sample download from a mirror must finish
+
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          operating_system: freebsd
-          sync_files: runner-to-vm
-          version:  '14.0'
-          run: |
-            uname -a
-            whoami
-            freebsd-version
-            echo $SHELL
-            sudo pkg install -y python3 bash automake libtool
-            sudo pkg install -y pkgconf gmake binutils lzlib 
-            autoreconf --warnings=all  -vif
+          submodules: recursive
+          ref: '${{inputs.myCommit}}'
+
+      - name: Configure
+        run: |
             ./configure
             make
             make check
