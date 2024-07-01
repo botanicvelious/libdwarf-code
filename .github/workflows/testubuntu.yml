@@ -62,4 +62,4 @@ jobs:
             cd build
             make -j3
             sudo make V=1 install 
-            ls -lha /usr/local/lib/libdwarf.a
+            tree ./
